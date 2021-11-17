@@ -16,7 +16,7 @@ func NewAcctController(base string) *accountController {
 	}
 }
 
-func (a *accountController) CreateAccount(data domain.AccountData) (string, error) {
+func (a *accountController) CreateAccount(data domain.Data) (string, error) {
 	return a.svc.Create(&data)
 }
 
@@ -24,6 +24,6 @@ func (a *accountController) DeleteAccount(acid string) error {
 	return a.svc.Delete(acid)
 }
 
-func (a *accountController) FetchAccount(acid string) (domain.AccountData, error) {
+func (a *accountController) FetchAccount(acid string) (domain.Data, error) {
 	return a.svc.Fetch(acid)
 }

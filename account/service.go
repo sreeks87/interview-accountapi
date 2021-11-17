@@ -34,7 +34,7 @@ func NewAccountService(c *http.Client, u string) domain.Service {
 	}
 }
 
-func (s *accountService) Create(data *domain.AccountData) (id string, e error) {
+func (s *accountService) Create(data *domain.Data) (id string, e error) {
 	req, e := json.Marshal(data)
 	if e != nil {
 		return "", e
@@ -54,19 +54,19 @@ func (s *accountService) Create(data *domain.AccountData) (id string, e error) {
 	return newAcct.ID, nil
 }
 
-func (s *accountService) Fetch(id string) (domain.AccountData, error) {
+func (s *accountService) Fetch(id string) (domain.Data, error) {
 	log.Println("fetching ", id)
 	fullUrl, _ := getFullURL(s.url.String(), id)
 	resp, e := s.client.Get(fullUrl.String())
 	if e != nil {
-		return domain.AccountData{}, e
+		return domain.Data{}, e
 	}
 	body, e := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if e != nil {
-		return domain.AccountData{}, e
+		return domain.Data{}, e
 	}
-	var acctDetails domain.AccountData
+	var acctDetails domain.Data
 	json.Unmarshal(body, &acctDetails)
 	return acctDetails, nil
 }

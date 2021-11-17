@@ -29,6 +29,6 @@ type AccountAttributes struct {
 	Switched                *bool    `json:"switched,omitempty"`
 }
 
-type Request struct {
+type Data struct {
 	Data AccountData `json:"data"`
 }

@@ -1,7 +1,7 @@
 package domain
 
 type Service interface {
-	Fetch(string) (AccountData, error)
+	Fetch(string) (Data, error)
 	Delete(string) error
-	Create(*AccountData) (string, error)
+	Create(*Data) (string, error)
 }
