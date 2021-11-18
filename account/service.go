@@ -11,8 +11,6 @@ import (
 	"net/url"
 	"path"
 	"time"
-
-	"github.com/sreeks87/interview-accountapi/account/domain"
 )
 
 const (
@@ -23,12 +21,18 @@ const (
 	ContentType = "application/vnd.api+json"
 )
 
+type Service interface {
+	Fetch(string) (Data, error)
+	Delete(string, string) error
+	Create(*Data) (Data, error)
+}
+
 type accountService struct {
 	client *http.Client
 	url    *url.URL
 }
 
-func NewAccountService(c *http.Client, u string) domain.Service {
+func NewAccountService(c *http.Client, u string) Service {
 	c.Timeout = timeout
 	full, _ := getFullURL(u, api)
 	return &accountService{
@@ -37,31 +41,31 @@ func NewAccountService(c *http.Client, u string) domain.Service {
 	}
 }
 
-func (s *accountService) Create(data *domain.Data) (domain.Data, error) {
+func (s *accountService) Create(data *Data) (Data, error) {
 	req, e := json.Marshal(data)
 	if e != nil {
-		return domain.Data{}, e
+		return Data{}, e
 	}
 	resp, e := s.makeRequest("POST", s.url.String(), bytes.NewBuffer(req))
 	if e != nil {
-		return domain.Data{}, e
+		return Data{}, e
 	}
 	body, e := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if e != nil {
-		return domain.Data{}, e
+		return Data{}, e
 	}
-	var newAcct domain.Data
+	var newAcct Data
 	json.Unmarshal(body, &newAcct)
 	return newAcct, nil
 }
 
-func (s *accountService) Fetch(id string) (domain.Data, error) {
+func (s *accountService) Fetch(id string) (Data, error) {
 	log.Println("fetching ", id)
 	fullUrl, _ := getFullURL(s.url.String(), id)
 	resp, e := s.makeRequest("GET", fullUrl.String(), nil)
 	if e != nil {
-		return domain.Data{}, e
+		return Data{}, e
 	}
 	if resp.StatusCode != 200 {
 		log.Println("error ", resp)
@@ -69,9 +73,9 @@ func (s *accountService) Fetch(id string) (domain.Data, error) {
 	body, e := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if e != nil {
-		return domain.Data{}, e
+		return Data{}, e
 	}
-	var acctDetails domain.Data
+	var acctDetails Data
 	json.Unmarshal(body, &acctDetails)
 	return acctDetails, nil
 }
@@ -92,7 +96,7 @@ func (s *accountService) Delete(id string, version string) error {
 	if e != nil {
 		return e
 	}
-	var acctDetails domain.AccountData
+	var acctDetails AccountData
 	json.Unmarshal(body, &acctDetails)
 	return nil
 }

@@ -2,12 +2,10 @@ package account
 
 import (
 	"net/http"
-
-	"github.com/sreeks87/interview-accountapi/account/domain"
 )
 
 type accountController struct {
-	svc domain.Service
+	svc Service
 }
 
 func NewAcctController(base string) *accountController {
@@ -16,7 +14,7 @@ func NewAcctController(base string) *accountController {
 	}
 }
 
-func (a *accountController) CreateAccount(data domain.Data) (domain.Data, error) {
+func (a *accountController) CreateAccount(data Data) (Data, error) {
 	return a.svc.Create(&data)
 }
 
@@ -24,6 +22,6 @@ func (a *accountController) DeleteAccount(acid string, version string) error {
 	return a.svc.Delete(acid, version)
 }
 
-func (a *accountController) FetchAccount(acid string) (domain.Data, error) {
+func (a *accountController) FetchAccount(acid string) (Data, error) {
 	return a.svc.Fetch(acid)
 }
