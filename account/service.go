@@ -42,6 +42,12 @@ func NewAccountService(c *http.Client, u string) Service {
 }
 
 func (s *accountService) Create(data *Data) (Data, error) {
+	if data == nil {
+		return Data{}, errors.New("input cant be nil/empty")
+	}
+	if data.Account.ID == "" {
+		return Data{}, errors.New("uuid cant be nil/empty")
+	}
 	req, e := json.Marshal(data)
 	if e != nil {
 		return Data{}, e
@@ -61,6 +67,9 @@ func (s *accountService) Create(data *Data) (Data, error) {
 }
 
 func (s *accountService) Fetch(id string) (Data, error) {
+	if id == "" {
+		return Data{}, errors.New("id cant be nil/empty")
+	}
 	log.Println("fetching ", id)
 	fullUrl, _ := getFullURL(s.url.String(), id)
 	resp, e := s.makeRequest("GET", fullUrl.String(), nil)
@@ -81,6 +90,9 @@ func (s *accountService) Fetch(id string) (Data, error) {
 }
 
 func (s *accountService) Delete(id string, version string) error {
+	if id == "" || version == "" {
+		return errors.New("both id and version anre mandatory")
+	}
 	log.Println("deleting ", id)
 	fullUrl, _ := getFullURL(s.url.String(), id)
 	q := fullUrl.Query()      // Get a copy of the query values.
@@ -119,10 +131,15 @@ func (s *accountService) makeRequest(method string, url string, payload io.Reade
 	if e != nil {
 		return nil, e
 	}
+	var resp *http.Response
 	req.Header.Set("Accept", Accept)
 	req.Header.Set("Content-Type", ContentType)
-
-	resp, e := s.client.Do(req)
+	for i := 0; i < retires; i++ {
+		resp, e = s.client.Do(req)
+		if e == nil {
+			break
+		}
+	}
 	if e != nil {
 		return nil, e
 	}

@@ -31,5 +31,5 @@ type AccountAttributes struct {
 }
 
 type Data struct {
-	Data AccountData `json:"data"`
+	Account AccountData `json:"data"`
 }
