@@ -19,45 +19,63 @@ Delete an account
 
 Example
 
-`go get `
+`go get github.com/sreeks87/interview-accountapi`
 
 Usage
 
 ```go
-import  "github.com/sreeks87/interview-accountapi/account"
-func AccountCreate() {
-c := account.NewAcctController(add)
-    acct := &account.AccountData{
-        ID:             ID,
-        OrganisationID: "4bdf8de6-d36d-4912-95be-623007daabb4",
-        Attributes: account.AccountAttributes{
-            AccountClassification:   "Personal",
-            AccountMatchingOptOut:   false,
-            AccountNumber:           "41426819",
-            AlternativeNames:        []string{"Samantha Holder"},
-            BankID:                  "400300",
-            BankIDCode:              "GBDSC",
-            BaseCurrency:            "GBP",
-            Bic:                     "NWBKGB22",
-            Country:                 "GB",
-            Iban:                    "GB11NWBK40030041426819",
-            JointAccount:            false,
-            Name:                    []string{"Sam Holder"},
-            SecondaryIdentification: "SECID",
-            Status:                  "confirmed",
-            Switched:                false,
-        },
-        Type:    "accounts",
-        Version: 0,
-    }
-    payload := account.Data{
-        Account: *acct,
-    }
-    createdAcc, e := c.CreateAccount(payload)
 
-    fetchedAcc, e := c.FetchAccount(id)
-    
-    e := c.DeleteAccount(id, version)
+package main
+
+import (
+	"fmt"
+
+	api "github.com/sreeks87/interview-accountapi/account"
+)
+
+func main() {
+	c := api.NewAcctController("http://localhost:8080")
+	acct := &api.AccountData{
+		ID:             "4bdf8de6-d36d-4912-95be-623007daabb4",
+		OrganisationID: "4bdf8de6-d36d-4912-95be-623007daabb4",
+		Attributes: api.AccountAttributes{
+			AccountClassification:   "Personal",
+			AccountMatchingOptOut:   false,
+			AccountNumber:           "41426819",
+			AlternativeNames:        []string{"Samantha Holder"},
+			BankID:                  "400300",
+			BankIDCode:              "GBDSC",
+			BaseCurrency:            "GBP",
+			Bic:                     "NWBKGB22",
+			Country:                 "GB",
+			Iban:                    "GB11NWBK40030041426819",
+			JointAccount:            false,
+			Name:                    []string{"Sam Holder"},
+			SecondaryIdentification: "SECID",
+			Status:                  "confirmed",
+			Switched:                false,
+		},
+		Type:    "accounts",
+		Version: 0,
+	}
+	payload := api.Data{
+		Account: *acct,
+	}
+	id, _ := c.CreateAccount(payload)
+	fmt.Println(id)
+	fmt.Println("--------------created--------------")
+	a, e := c.FetchAccount("4bdf8de6-d36d-4912-95be-623007daabb4")
+	if e != nil {
+		fmt.Println(e)
+	}
+	fmt.Println(a)
+	fmt.Println("-----------------------fetched--------------")
+
+	e = c.DeleteAccount("4bdf8de6-d36d-4912-95be-623007daabb4", "0")
+	if e != nil {
+		fmt.Println(e)
+	}
+	fmt.Println("Deleted")
 
 }
 ```
