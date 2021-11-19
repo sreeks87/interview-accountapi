@@ -6,17 +6,20 @@ The library exposes three functions via.
 
 Create an account
 
-    The Create function expects the Data in the models.Data fomrat to be passed
-    Returns acreated Data (account) object
+    The Create function expects the Data in the models.Data format to be passed
+    
+    Returns a created Data model (account).
 
 Fetch details of the accoount
 
     The Fetch function expects a valid UUID to be passed as the parameter.
+    
     Returns error if the UUID is invalid.
 
 Delete an account
     
     Function expects a valid uuid of the account and the version of the account to be deleted.
+    
     Returns error if any one of the parameters is missed/invalid  
 
 Example
