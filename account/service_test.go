@@ -1,5 +1,6 @@
 package account
 
+// This package contains the unit tests for the service
 import (
 	"net/http"
 	"testing"

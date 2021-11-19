@@ -21,6 +21,8 @@ const (
 	ContentType = "application/vnd.api+json"
 )
 
+// The service interface
+// A service is supposed to implent the Create Fetch and delete functions
 type Service interface {
 	Fetch(string) (Data, error)
 	Delete(string, string) error
@@ -32,6 +34,7 @@ type accountService struct {
 	url    *url.URL
 }
 
+// NewAccountService returns the object of a service which can be used by controlled to call the implemented methods.
 func NewAccountService(c *http.Client, u string) Service {
 	c.Timeout = timeout
 	full, _ := getFullURL(u, api)
@@ -41,6 +44,9 @@ func NewAccountService(c *http.Client, u string) Service {
 	}
 }
 
+// Create function does the accounbt creation, it returns a Data object from the models.
+// input - Data object
+// Output - Data, error
 func (s *accountService) Create(data *Data) (Data, error) {
 	if data == nil {
 		return Data{}, errors.New("input cant be nil/empty")
@@ -66,6 +72,9 @@ func (s *accountService) Create(data *Data) (Data, error) {
 	return newAcct, nil
 }
 
+// Fetch function fetches the account from API, it returns a Data object from the models.
+// input - uuid of the account to be fetched
+// Output - Data, error
 func (s *accountService) Fetch(id string) (Data, error) {
 	if id == "" {
 		return Data{}, errors.New("id cant be nil/empty")
@@ -89,6 +98,9 @@ func (s *accountService) Fetch(id string) (Data, error) {
 	return acctDetails, nil
 }
 
+// Delete deletes the created account
+// input - uuid and version
+// output - error, only in case it failed
 func (s *accountService) Delete(id string, version string) error {
 	if id == "" || version == "" {
 		return errors.New("both id and version anre mandatory")
@@ -126,6 +138,7 @@ func getFullURL(baseURL string, pathURL string) (*url.URL, error) {
 	return base, nil
 }
 
+// makeRequest is used to make a generic request to the API
 func (s *accountService) makeRequest(method string, url string, payload io.Reader) (*http.Response, error) {
 	req, e := http.NewRequest(method, url, payload)
 	if e != nil {
